@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class PlayController : MonoBehaviour {
+
+    CardController _cardControllerInstance;
 
     Player _player1;
     Player _player2;
@@ -10,7 +13,7 @@ public class PlayController : MonoBehaviour {
     Player _activePlayer;
 
     [SerializeField]
-    Button[] _cardButtons;
+    List<Button> _cardButtons;
 
     [SerializeField]
     Fort fort1, fort2;
@@ -25,6 +28,7 @@ public class PlayController : MonoBehaviour {
             fort1 = GetComponentsInChildren<Fort>()[0];
             fort2 = GetComponentsInChildren<Fort>()[1];
         }
+        _cardControllerInstance = FindObjectOfType<CardController>();
 
         _player1 = new Player(fort1);
         _player2 = new Player(fort2);
@@ -52,11 +56,24 @@ public class PlayController : MonoBehaviour {
             {
                 _activePlayer = _player1;
             }
+            _cardControllerInstance.SwitchPlayer(_activePlayer);
         }
 
         _activePlayer.TurnUpdate();
         _activePlayer.TurnGUI();
 	}
+
+    public Player GetOtherPlayer(Player player)
+    {
+        if (player == _player1)
+        {
+            return _player2;
+        }
+        else
+        {
+            return _player1;
+        }
+    }
 
     /// <summary>
     /// To be called when a player believes the game is over
@@ -91,6 +108,8 @@ public class PlayController : MonoBehaviour {
 
     public void OnClicked(Button button)
     {
+        _activePlayer.PlayCard(_cardButtons.IndexOf(button));
+
         if (gameOver)
             return;
 

@@ -15,6 +15,8 @@ public enum ResourceType
 public class Player {
 
     Fort _fort;
+    CardController _cardControllerInstance;
+    PlayController _playControllerInstance;
 
     public Fort Fort
     {
@@ -31,6 +33,8 @@ public class Player {
     public Player(Fort fort)
     {
         _fort = fort;
+        _cardControllerInstance = GameObject.FindObjectOfType<CardController>();
+        _playControllerInstance = GameObject.FindObjectOfType<PlayController>();
     }
 
     /// <summary>
@@ -40,6 +44,15 @@ public class Player {
     public bool TurnUpdate()
     {
         return false;
+    }
+
+    public void PlayCard(int index)
+    {
+        //Animate card to deck
+        Hand[index].Affect(this, _playControllerInstance.GetOtherPlayer(this));
+        _hand[index] = _cardControllerInstance.GetNewCard();
+        Debug.Log(index);
+        //Animate deck to card
     }
 
     /// <summary>
